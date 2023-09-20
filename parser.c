@@ -1,86 +1,106 @@
 #include "shell.h"
 
 /**
- * is_cmd - determines if a file is an executable command
- * @info: the info struct
- * @path: path to the file
+ * is_cmd - Determines if a file is an executable command.
+ * @info: Pointer to the info struct.
+ * @file_path: Path to the file to be checked.
  *
- * Return: 1 if true, 0 otherwise
+ * Return: 1 if the file is an executable command, 0 otherwise.
  */
-int is_cmd(info_t *info, char *path)
+int is_cmd(info_t *info, char *file_path)
 {
-	struct stat st;
+    struct stat file_stat;
 
-	(void)info;
-	if (!path || stat(path, &st))
-		return (0);
+    (void)info;
 
-	if (st.st_mode & S_IFREG)
-	{
-		return (1);
-	}
-	return (0);
+/* Check if the file path is NULL or if stat fails. */
+    if (!file_path || stat(file_path, &file_stat) != 0)
+        return (0);
+
+/* Check if the file is a regular file (executable). */
+    if (S_ISREG(file_stat.st_mode))
+    {
+        return (1);
+    }
+    return (0);
 }
 
 /**
- * dup_chars - duplicates characters
- * @pathstr: the PATH string
- * @start: starting index
- * @stop: stopping index
+ * extract_substring - Extracts a substring from the given string.
+ * @input_string: The input string.
+ * @start_index: Starting index of the substring.
+ * @end_index: Ending index of the substring.
  *
- * Return: pointer to new buffer
+ * Return: Pointer to a new buffer containing the extracted substring.
  */
-char *dup_chars(char *pathstr, int start, int stop)
+char *extract_substring(char *input_string, int start_index, int end_index)
 {
-	static char buf[1024];
-	int i = 0, k = 0;
+    static char buffer[1024];
+    int i=0,buffer_index = 0;
 
-	for (k = 0, i = start; i < stop; i++)
-		if (pathstr[i] != ':')
-			buf[k++] = pathstr[i];
-	buf[k] = 0;
-	return (buf);
+    for (buffer_index=0, i = start_index; i < end_index; i++)
+    {
+        if (input_string[i] != ':')
+            buffer[buffer_index++] = input_string[i];
+    }
+    buffer[buffer_index] = '\0';
+
+    return (buffer);
 }
 
 /**
- * find_path - finds this cmd in the PATH string
- * @info: the info struct
- * @pathstr: the PATH string
- * @cmd: the cmd to find
+ * find_path - Finds the full path of a command in the PATH string.
+ * @info: Pointer to the info struct.
+ * @path_string: The PATH string containing a list of directories.
+ * @command_name: The name of the command to find.
  *
- * Return: full path of cmd if found or NULL
+ * Return: Full path of the command if found, or NULL if not found.
  */
-char *find_path(info_t *info, char *pathstr, char *cmd)
+char *find_path(info_t *info, char *path_string, char *command_name)
 {
-	int i = 0, curr_pos = 0;
-	char *path;
+    int path_index = 0;
+    int current_position = 0;
+    char *full_path;
 
-	if (!pathstr)
-		return (NULL);
-	if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
-	{
-		if (is_cmd(info, cmd))
-			return (cmd);
-	}
-	while (1)
-	{
-		if (!pathstr[i] || pathstr[i] == ':')
-		{
-			path = dup_chars(pathstr, curr_pos, i);
-			if (!*path)
-				_strcat(path, cmd);
-			else
-			{
-				_strcat(path, "/");
-				_strcat(path, cmd);
-			}
-			if (is_cmd(info, path))
-				return (path);
-			if (!pathstr[i])
-				break;
-			curr_pos = i;
-		}
-		i++;
-	}
-	return (NULL);
+/* Check if the path_string is NULL. */
+    if (!path_string)
+        return (NULL);
+
+/* Check if the command_name starts with "./" and is an executable. */
+    if ((_strlen(command_name) > 2) && starts_with(command_name, "./"))
+    {
+        if (is_cmd(info, command_name))
+            return (command_name);
+    }
+
+    while (1)
+    {
+/* Check for the end of the path_string or a directory separator ':'. */
+        if (!path_string[path_index] || path_string[path_index] == ':')
+        {
+            full_path = extract_substring(path_string, current_position, path_index);
+
+/* Append the command_name to the extracted path. */
+            if (!*full_path)
+                _strcat(full_path, command_name);
+            else
+            {
+                _strcat(full_path, "/");
+                _strcat(full_path, command_name);
+            }
+
+/* Check if the resulting path is an executable. */
+            if (is_cmd(info, full_path))
+                return (full_path);
+
+/* If not found in this directory, continue searching. */
+            if (!path_string[path_index])
+                break;
+
+            current_position = path_index + 1;
+        }
+        path_index++;
+    }
+
+    return (NULL);
 }

@@ -1,87 +1,102 @@
 #include "shell.h"
 
 /**
- * _strcpy - copies a string
- * @dest: the destination
- * @src: the source
+ * _strcpy - Copies a source string into a destination string.
+ * @dest: The destination string.
+ * @src: The source string.
  *
- * Return: pointer to destination
+ * Return: A pointer to the destination string.
  */
 char *_strcpy(char *dest, char *src)
 {
-	int i = 0;
+    int index = 0;
 
-	if (dest == src || src == 0)
-		return (dest);
-	while (src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = 0;
-	return (dest);
+/* Check for special cases */
+    if (dest == src || src == NULL)
+        return (dest);
+
+/* Copy characters from source to destination */
+    while (src[index])
+    {
+        dest[index] = src[index];
+        index++;
+    }
+    dest[index] = '\0'; /* Null-terminate the destination string */
+    return (dest);
 }
 
 /**
- * _strdup - duplicates a string
- * @str: the string to duplicate
+ * _strdup - Duplicates a string.
+ * @str: The string to duplicate.
  *
- * Return: pointer to the duplicated string
+ * Return: A pointer to the duplicated string.
  */
 char *_strdup(const char *str)
 {
-	int length = 0;
-	char *ret;
+    int length = 0;
+    char *duplicate;
 
-	if (str == NULL)
-		return (NULL);
-	while (*str++)
-		length++;
-	ret = malloc(sizeof(char) * (length + 1));
-	if (!ret)
-		return (NULL);
-	for (length++; length--;)
-		ret[length] = *--str;
-	return (ret);
+/* Check for NULL input */
+    if (str == NULL)
+        return (NULL);
+
+/* Calculate the length of the input string */
+    while (*str++)
+        length++;
+/* Allocate memory for the duplicate string */
+    duplicate = malloc(sizeof(char) * (length + 1));
+    if (!duplicate)
+        return (NULL);
+/* Copy characters from input to duplicate */
+    for (length++; length--;)
+        duplicate[length] = *--str;
+
+    return (duplicate);
 }
 
 /**
- * _puts - prints an input string
- * @str: the string to be printed
+ * _puts - Prints a null-terminated string to stdout.
+ * @str: The string to be printed.
  *
- * Return: Nothing
+ * Return: Nothing.
  */
 void _puts(char *str)
 {
-	int i = 0;
+    int index = 0;
 
-	if (!str)
-		return;
-	while (str[i] != '\0')
-	{
-		_putchar(str[i]);
-		i++;
-	}
+/* Check for NULL input */
+    if (!str)
+        return;
+
+/* Print characters in the string */
+    while (str[index] != '\0')
+    {
+        _putchar(str[index]);
+        index++;
+    }
 }
 
 /**
- * _putchar - writes the character c to stdout
- * @c: The character to print
+ * _putchar - Writes a character to stdout.
+ * @c: The character to print.
  *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
+ * Return: On success, returns 1.
+ * On error, returns -1 and sets errno appropriately.
  */
 int _putchar(char c)
 {
-	static int i;
-	static char buf[WRITE_BUF_SIZE];
+    static int buffer_index;
+    static char buffer[WRITE_BUF_SIZE];
+/* Check if the buffer needs to be flushed or is full */
+    if (c == BUF_FLUSH || buffer_index >= WRITE_BUF_SIZE)
+    {
+        write(1, buffer, buffer_index);
+        buffer_index = 0;
+    }
 
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
-	{
-		write(1, buf, i);
-		i = 0;
-	}
-	if (c != BUF_FLUSH)
-		buf[i++] = c;
-	return (1);
+/* Add the character to the buffer, unless it's a flush indicator */
+    if (c != BUF_FLUSH)
+        buffer[buffer_index++] = c;
+
+    return (1);
 }

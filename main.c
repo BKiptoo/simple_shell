@@ -1,44 +1,54 @@
 #include "shell.h"
 
 /**
- * main - entry point
- * @ac: arg count
- * @av: arg vector
+ * main - Entry point for the shell program
+ * @argc: Argument count
+ * @argv: Argument vector
  *
  * Return: 0 on success, 1 on error
  */
-int main(int ac, char **av)
+int main(int argc, char **argv)
 {
-	info_t info[] = { INFO_INIT };
-	int fd = 2;
+    info_t shell_info[] = { INFO_INIT }; /* Initialize shell information */
+    int file_descriptor = 2; /* File descriptor for error output */
+/* Inline assembly to perform some operation on the file descriptor */
+    asm ("mov %1, %0\n\t"
+        "add $3, %0"
+        : "=r" (file_descriptor)
+        : "r" (file_descriptor));
 
-	asm ("mov %1, %0\n\t"
-			"add $3, %0"
-			: "=r" (fd)
-			: "r" (fd));
+    if (argc == 2)
+    {
+/* Attempt to open a file specified in the command-line argument */
+        file_descriptor = open(argv[1], O_RDONLY);
 
-	if (ac == 2)
-	{
-		fd = open(av[1], O_RDONLY);
-		if (fd == -1)
-		{
-			if (errno == EACCES)
-				exit(126);
-			if (errno == ENOENT)
-			{
-				_eputs(av[0]);
-				_eputs(": 0: Can't open ");
-				_eputs(av[1]);
-				_eputchar('\n');
-				_eputchar(BUF_FLUSH);
-				exit(127);
-			}
-			return (EXIT_FAILURE);
-		}
-		info->readfd = fd;
-	}
-	populate_env_list(info);
-	read_history(info);
-	hsh(info, av);
-	return (EXIT_SUCCESS);
+        if (file_descriptor == -1)
+        {
+/* Handle different error cases */
+            if (errno == EACCES)
+                exit(126); /* Permission denied */
+            if (errno == ENOENT)
+            {
+/* Print an error message and exit */
+                _eputs(argv[0]);
+                _eputs(": 0: Can't open ");
+                _eputs(argv[1]);
+                _eputchar('\n');
+                _eputchar(BUF_FLUSH);
+                exit(127); /* File not found */
+            }
+            return (EXIT_FAILURE); /* Other error, exit with failure code */
+        }
+
+/* Update the read file descriptor in shell_info */
+        shell_info->readfd = file_descriptor;
+    }
+/* Populate the environment list */
+    populate_environment_list(shell_info);
+ /* Read shell history */
+    read_history(shell_info);
+/* Call the shell function */
+    hsh(shell_info, argv);
+
+    return (EXIT_SUCCESS); /* Exit with success code */
 }

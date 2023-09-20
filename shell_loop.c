@@ -1,38 +1,41 @@
 #include "shell.h"
 
 /**
- * hsh - main shell loop
- * @info: the parameter & return info struct
- * @av: the argument vector from main()
+ * hsh - Main loop of the shell
+ * @info: Pointer to the shell information struct
+ * @arguments: Argument vector from main()
  *
- * Return: 0 on success, 1 on error, or error code
+ * Returns:
+ *   - 0 on success
+ *   - 1 on error
+ *   - Error code otherwise
  */
 int hsh(info_t *info, char **av)
 {
-	ssize_t r = 0;
+   ssize_t r = 0;
 	int builtin_ret = 0;
 
 	while (r != -1 && builtin_ret != -2)
 	{
 		clear_info(info);
-		if (interactive(info))
+		if (isInteractiveMode(info))
 			_puts("$ ");
 		_eputchar(BUF_FLUSH);
 		r = get_input(info);
 		if (r != -1)
 		{
 			set_info(info, av);
-			builtin_ret = find_builtin(info);
+			builtin_ret = find_builtin_command(info);
 			if (builtin_ret == -1)
-				find_cmd(info);
+				find_command(info);
 		}
-		else if (interactive(info))
+		else if (isInteractiveMode(info))
 			_putchar('\n');
-		free_info(info, 0);
+		free_memoryinfo(info, 0);
 	}
 	write_history(info);
-	free_info(info, 1);
-	if (!interactive(info) && info->status)
+	free_memoryinfo(info, 1);
+	if (!isInteractiveMode(info) && info->status)
 		exit(info->status);
 	if (builtin_ret == -2)
 	{
@@ -43,49 +46,53 @@ int hsh(info_t *info, char **av)
 	return (builtin_ret);
 }
 
-/**
- * find_builtin - finds a builtin command
- * @info: the parameter & return info struct
- *
- * Return: -1 if builtin not found,
- * 	0 if builtin executed successfully,
- * 	1 if builtin found but not successful,
- * 	2 if builtin signals exit()
- */
-int find_builtin(info_t *info)
-{
-	int i, built_in_ret = -1;
-	builtin_table builtintbl[] = {
-		{"exit", _myexit},
-		{"env", _myenv},
-		{"help", _myhelp},
-		{"history", _myhistory},
-		{"setenv", _mysetenv},
-		{"unsetenv", _myunsetenv},
-		{"cd", _mycd},
-		{"alias", _myalias},
-		{NULL, NULL}
-	};
 
-	for (i = 0; builtintbl[i].type; i++)
-		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
-		{
-			info->line_count++;
-			built_in_ret = builtintbl[i].func(info);
-			break;
-		}
-	return (built_in_ret);
+
+/**
+ * find_builtin_command - Find a built-in command in the shell
+ * @info: Pointer to the shell information struct
+ *
+ * Returns:
+ *   - -1 if the built-in command is not found
+ *   - 0 if the built-in command is executed successfully
+ *   - 1 if the built-in command is found but not successful
+ *   - -2 if the built-in command signals an exit
+ */
+int find_builtin_command(info_t *info)
+{
+    int i, builtin_return_code = -1;
+    builtin_table built_in_commands[] = {
+        {"exit", exit_shell},
+        {"env",_myenvironment},
+        {"help", display_help},
+        {"history", displayCommandHistory},
+        {"setenv", _mysetenv},
+        {"unsetenv", _myunsetenv},
+        {"cd", change_directory},
+        {"alias", aliasCommand},
+        {NULL, NULL}
+    };
+
+    for (i = 0; built_in_commands[i].type; i++)
+    {
+        if (_strcmp(info->argv[0], built_in_commands[i].type) == 0)
+        {
+            info->line_count++;
+            builtin_return_code = built_in_commands[i].func(info);
+            break;
+        }
+    }
+
+    return (builtin_return_code);
 }
 
 /**
- * find_cmd - finds a command in PATH
- * @info: the parameter & return info struct
- *
- * Return: void
+ * find_external_command - Find and execute an external command
+ * @info: Pointer to the shell information struct
  */
-void find_cmd(info_t *info)
+void find_command(info_t *info)
 {
-	char *path = NULL;
+   char *path = NULL;
 	int i, k;
 
 	info->path = info->argv[0];
@@ -95,7 +102,7 @@ void find_cmd(info_t *info)
 		info->linecount_flag = 0;
 	}
 	for (i = 0, k = 0; info->arg[i]; i++)
-		if (!is_delim(info->arg[i], " \t\n"))
+		if (!isDelimiter(info->arg[i], " \t\n"))
 			k++;
 	if (!k)
 		return;
@@ -104,13 +111,13 @@ void find_cmd(info_t *info)
 	if (path)
 	{
 		info->path = path;
-		fork_cmd(info);
+		fork_command(info);
 	}
 	else
 	{
-		if ((interactive(info) || _getenv(info, "PATH=")
-					|| info->argv[0][0] == '/') && is_cmd(info, info->argv[0]))
-			fork_cmd(info);
+		if ((isInteractiveMode(info) || _getenv(info, "PATH=")
+			|| info->argv[0][0] == '/') && is_cmd(info, info->argv[0]))
+			fork_command(info);
 		else if (*(info->arg) != '\n')
 		{
 			info->status = 127;
@@ -120,14 +127,12 @@ void find_cmd(info_t *info)
 }
 
 /**
- * fork_cmd - forks a an exec thread to run cmd
- * @info: the parameter & return info struct
- *
- * Return: void
+ * fork_and_execute_command - Fork a new process and execute an external command
+ * @info: Pointer to the shell information struct
  */
-void fork_cmd(info_t *info)
+void fork_command(info_t *info)
 {
-	pid_t child_pid;
+   pid_t child_pid;
 
 	child_pid = fork();
 	if (child_pid == -1)
@@ -140,7 +145,7 @@ void fork_cmd(info_t *info)
 	{
 		if (execve(info->path, info->argv, get_environ(info)) == -1)
 		{
-			free_info(info, 1);
+			free_memoryinfo(info, 1);
 			if (errno == EACCES)
 				exit(126);
 			exit(1);
