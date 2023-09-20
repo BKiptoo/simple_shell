@@ -23,15 +23,15 @@ int isInteractiveMode(info_t *info)
 int isDelimiter(char c, char *delimiters)
 {
 /*Iterate through the delimiter string*/
-while (*delimiters) 
-{
-    if (*delimiters == c)
-    {
-        return (1); /*Character 'c' is a delimiter*/
-    }
-        delimiters++;
-}
-return (0); /*Character 'c' is not a delimiter*/
+	while (*delimiters)
+	{
+		if (*delimiters == c)
+		{
+			return (1); /*Character 'c' is a delimiter*/
+		}
+		delimiters++;
+	}
+	return (0); /*Character 'c' is not a delimiter*/
 }
 
 /**
@@ -42,13 +42,14 @@ return (0); /*Character 'c' is not a delimiter*/
  */
 int isAlphabetic(int c)
 {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-    {
-        return (1); /*Character 'c' is an alphabetic character*/
-    } else 
-    {
-        return (0); /* Character 'c' is not an alphabetic character*/
-    }
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+	{
+		return (1); /*Character 'c' is an alphabetic character*/
+	}
+	else
+	{
+		return (0); /* Character 'c' is not an alphabetic character*/
+	}
 }
 
 /**
@@ -61,31 +62,29 @@ int stringToInteger(char *s)
 {
 int i, sign = 1, flag = 0, result = 0;
 /* Initialize 'result' and 'flag' to 0, 'sign' to 1, and 'output' to 0 */
-
 for (i = 0; s[i] != '\0' && flag != 2; i++)
 {
-    if (s[i] == '-')
-    {
-        sign *= -1; /* Handle negative sign */
-    }
-
-    if (s[i] >= '0' && s[i] <= '9')
-    {
-        flag = 1; /*Indicate that digits have been encountered*/ 
-        result *= 10; /*Multiply the current result by 10*/ 
-        result += (s[i] - '0'); /*Add the numeric value of the character*/ 
-    }
-    else if (flag == 1)
-    {
-            flag = 2; /*Stop processing after encountering non-digit characters*/ 
-    }
+	if (s[i] == '-')
+	{
+		sign *= -1; /* Handle negative sign */
+	}
+	if (s[i] >= '0' && s[i] <= '9')
+	{
+		flag = 1; /*Indicate that digits have been encountered*/
+		result *= 10; /*Multiply the current result by 10*/
+		result += (s[i] - '0'); /*Add the numeric value of the character*/
+	}
+	else if (flag == 1)
+	{
+		flag = 2; /*Stop processing after encountering non-digit characters*/
+	}
 }
-    if (sign == -1)
-    {
-        return (-result); /*Apply negative sign if necessary*/ 
-    }
-    else
-    {
-        return (result); /* Return the result as a positive integer*/ 
-    }
+if (sign == -1)
+{
+	return (-result); /*Apply negative sign if necessary*/
+}
+else
+{
+	return (result); /* Return the result as a positive integer*/
+}
 }
