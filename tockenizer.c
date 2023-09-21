@@ -2,137 +2,95 @@
 
 /**
  *strtow - splits a string into words using multiple delimiters
- * @input_str: the input string to split
- * @delimiters: a string containing delimiters
+ * @str: the input string to split
+ * @d: a string containing delimiters
  *
  * Return: a pointer to an array of strings, or NULL on failure
  */
-char **strtow(char *input_str, char *delimiters)
+char **strtow(char *str, char *d)
 {
-	int i, j, k, m, num_words = 0;
-	char **result;
+	int i, j, k, m, numwords = 0;
+	char **s;
 
-	/* Check for NULL or empty input string */
-	if (input_str == NULL || input_str[0] == '\0')
+	if (str == NULL || str[0] == 0)
 		return (NULL);
+	if (!d)
+		d = " ";
+	for (i = 0; str[i] != '\0'; i++)
+		if (!isDelimiter(str[i], d) && (isDelimiter(str[i + 1], d) || !str[i + 1]))
+			numwords++;
 
-	/* If delimiters is NULL, use a space as the default delimiter */
-	if (!delimiters)
-		delimiters = " ";
-
-	/* Count the number of words in the input string */
-	for (i = 0; input_str[i] != '\0'; i++)
-		if (!isDelimiter(input_str[i], delimiters) &&
-		    (isDelimiter(input_str[i + 1], delimiters) || !input_str[i + 1]))
-			num_words++;
-
-	/* If no words found, return NULL */
-	if (num_words == 0)
+	if (numwords == 0)
 		return (NULL);
-
-	/* Allocate memory for the array of strings */
-	result = malloc((1 + num_words) * sizeof(char *));
-	if (!result)
+	s = malloc((1 + numwords) * sizeof(char *));
+	if (!s)
 		return (NULL);
-
-	for (i = 0, j = 0; j < num_words; j++)
+	for (i = 0, j = 0; j < numwords; j++)
 	{
-		/* Skip leading delimiters */
-		while (isDelimiter(input_str[i], delimiters))
+		while (isDelimiter(str[i], d))
 			i++;
-
 		k = 0;
-		/* Copy characters until the next delimiter or end of string */
-		while (!isDelimiter(input_str[i + k], delimiters) && input_str[i + k])
+		while (!isDelimiter(str[i + k], d) && str[i + k])
 			k++;
-
-		/* Allocate memory for the current word */
-		result[j] = malloc((k + 1) * sizeof(char));
-		if (!result[j])
+		s[j] = malloc((k + 1) * sizeof(char));
+		if (!s[j])
 		{
-			/* Free previously allocated memory on failure */
 			for (k = 0; k < j; k++)
-				free(result[k]);
-			free(result);
+				free(s[k]);
+			free(s);
 			return (NULL);
 		}
-
-		/* Copy characters into the current word */
 		for (m = 0; m < k; m++)
-			result[j][m] = input_str[i++];
-		result[j][m] = '\0';
+			s[j][m] = str[i++];
+		s[j][m] = 0;
 	}
-
-	/* Null-terminate the result array */
-	result[j] = NULL;
-
-	return (result);
+	s[j] = NULL;
+	return (s);
 }
 
 /**
  * split_string_single_delimiter - splits a string into words
  * using a single delimiter
- * @input_str: the input string to split
- * @delimiter: the delimiter character
+ * @str: the input string to split
+ * @d: the delimiter character
  *
  * Return: a pointer to an array of strings, or NULL on failure
  */
-char **split_string_single_delimiter(char *input_str, char delimiter)
+char **split_string_single_delimiter(char *str, char d)
 {
-	int i, j, k, m, num_words = 0;
-	char **result;
+int i, j, k, m, numwords = 0;
+	char **s;
 
-	/* Check for NULL or empty input string */
-	if (input_str == NULL || input_str[0] == '\0')
+	if (str == NULL || str[0] == 0)
 		return (NULL);
-
-	/* Count the number of words in the input string */
-	for (i = 0; input_str[i] != '\0'; i++)
-		if ((input_str[i] != delimiter && input_str[i + 1] == delimiter) ||
-		    (input_str[i] != delimiter && !input_str[i + 1]) ||
-		    input_str[i + 1] == delimiter)
-			num_words++;
-
-	/* If no words found, return NULL */
-	if (num_words == 0)
+	for (i = 0; str[i] != '\0'; i++)
+		if ((str[i] != d && str[i + 1] == d) ||
+		    (str[i] != d && !str[i + 1]) || str[i + 1] == d)
+			numwords++;
+	if (numwords == 0)
 		return (NULL);
-
-	/* Allocate memory for the array of strings */
-	result = malloc((1 + num_words) * sizeof(char *));
-	if (!result)
+	s = malloc((1 + numwords) * sizeof(char *));
+	if (!s)
 		return (NULL);
-
-	for (i = 0, j = 0; j < num_words; j++)
+	for (i = 0, j = 0; j < numwords; j++)
 	{
-		/* Skip leading delimiters */
-		while (input_str[i] == delimiter && input_str[i] != delimiter)
+		while (str[i] == d && str[i] != d)
 			i++;
-
 		k = 0;
-		/* Copy characters until the next delimiter or end of string */
-		while (input_str[i + k] != delimiter &&
-				input_str[i + k] && input_str[i + k] != delimiter)
+		while (str[i + k] != d && str[i + k] && str[i + k] != d)
 			k++;
-
-		/* Allocate memory for the current word */
-		result[j] = malloc((k + 1) * sizeof(char));
-		if (!result[j])
+		s[j] = malloc((k + 1) * sizeof(char));
+		if (!s[j])
 		{
-			/* Free previously allocated memory on failure */
 			for (k = 0; k < j; k++)
-				free(result[k]);
-			free(result);
+				free(s[k]);
+			free(s);
 			return (NULL);
 		}
-
-		/* Copy characters into the current word */
 		for (m = 0; m < k; m++)
-			result[j][m] = input_str[i++];
-		result[j][m] = '\0';
+			s[j][m] = str[i++];
+		s[j][m] = 0;
 	}
-
-	/* Null-terminate the result array */
-	result[j] = NULL;
-
-	return (result);
+	s[j] = NULL;
+	return (s);
 }

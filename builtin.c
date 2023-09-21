@@ -52,59 +52,48 @@ int exit_shell(info_t *info)
  */
 int change_directory(info_t *info)
 {
-	char *cwd, *new_dir, buffer[1024];
+	char *s, *new_dir, buffer[1024];
 	int chdir_result;
-/*Get the current working directory*/
-	cwd = getcwd(buffer, 1024);
-	if (!cwd)
-		_puts("TODO: Handle getcwd failure here\n");
+
+	s = getcwd(buffer, 1024);
+	if (!s)
+		_puts("TODO: >>getcwd failure emsg here<<\n");
 	if (!info->argv[1])
 	{
-/*No argument provided, change to the home directory or root*/
 		new_dir = _getenv(info, "HOME=");
 		if (!new_dir)
-			chdir_result = chdir((new_dir = _getenv(info, "PWD=")) ? new_dir : "/");
+			chdir_result = /* TODO: what should this be? */
+				chdir((new_dir = _getenv(info, "PWD=")) ? new_dir : "/");
 		else
 			chdir_result = chdir(new_dir);
 	}
 	else if (_strcmp(info->argv[1], "-") == 0)
 	{
-/*Change to the previous working directory ("-")*/
 		if (!_getenv(info, "OLDPWD="))
 		{
-/*Handle the case where "OLDPWD" is not set*/
-			_puts(cwd);
+			_puts(s);
 			_putchar('\n');
 			return (1);
 		}
-
-/*Change to the old working directory and print it*/
-		_puts(_getenv(info, "OLDPWD="));
-		_putchar('\n');
-		chdir_result = chdir((new_dir = _getenv(info, "OLDPWD=")) ? new_dir : "/");
+		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
+		chdir_result = /* TODO: what should this be? */
+			chdir((new_dir = _getenv(info, "OLDPWD=")) ? new_dir : "/");
 	}
 	else
-	{
-/*Change to the specified directory*/
 		chdir_result = chdir(info->argv[1]);
-	}
-
 	if (chdir_result == -1)
 	{
-/*Handle the case where chdir fails*/
 		print_error(info, "can't cd to ");
-		_eputs(info->argv[1]);
-		_eputchar('\n');
+		_eputs(info->argv[1]), _eputchar('\n');
 	}
 	else
 	{
-/*Update "OLDPWD" and "PWD" environment variables*/
 		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
 		_setenv(info, "PWD", getcwd(buffer, 1024));
 	}
-
-return (0);
+	return (0);
 }
+
 
 /**
  * display_help - Display a help message (not yet implemented)

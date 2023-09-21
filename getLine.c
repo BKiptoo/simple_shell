@@ -132,46 +132,40 @@ ssize_t read_buffer(info_t *info, char *buf, size_t *i)
 int _getline(info_t *info, char **ptr, size_t *length)
 {
 	static char buf[READ_BUF_SIZE];
-	static size_t current_position, buffer_length;
+	static size_t i, len;
 	size_t k;
-	ssize_t bytes_read = 0, total_bytes_read = 0;
+	ssize_t r = 0, s = 0;
 	char *p = NULL, *new_p = NULL, *c;
 
 	p = *ptr;
-
 	if (p && length)
-		total_bytes_read = *length;
-	if (current_position == buffer_length)
-		current_position = buffer_length = 0;
-	bytes_read = read_buffer(info, buf, &buffer_length);
-	if (bytes_read == -1 || (bytes_read == 0 && buffer_length == 0))
+		s = *length;
+	if (i == len)
+		i = len = 0;
+
+	r = read_buffer(info, buf, &len);
+	if (r == -1 || (r == 0 && len == 0))
 		return (-1);
-	c = _strchr(buf + current_position, '\n');
-	k = c ? 1 + (unsigned int)(c - buf) : buffer_length;
-	new_p = _realloc(p, total_bytes_read, total_bytes_read ?
-			total_bytes_read + k : k + 1);
-	if (!new_p)
-	{
-/*MALLOC FAILURE!*/
+
+	c = _strchr(buf + i, '\n');
+	k = c ? 1 + (unsigned int)(c - buf) : len;
+	new_p = _realloc(p, s, s ? s + k : k + 1);
+	if (!new_p) /* MALLOC FAILURE! */
 		return (p ? free(p), -1 : -1);
-	}
-	if (total_bytes_read)
-	{
-		_strncat(new_p, buf + current_position, k - current_position);
-	}
+
+	if (s)
+		_strncat(new_p, buf + i, k - i);
 	else
-	{
-		_strncpy(new_p, buf + current_position, k - current_position + 1);
-	}
-	total_bytes_read += k - current_position;
-	current_position = k;
+		_strncpy(new_p, buf + i, k - i + 1);
+
+	s += k - i;
+	i = k;
 	p = new_p;
+
 	if (length)
-	{
-		*length = total_bytes_read;
-	}
+		*length = s;
 	*ptr = p;
-	return (total_bytes_read);
+	return (s);
 }
 
 /**
