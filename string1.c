@@ -9,20 +9,20 @@
  */
 char *_strcpy(char *dest, char *src)
 {
-    int index = 0;
+	int index = 0;
 
 /* Check for special cases */
-    if (dest == src || src == NULL)
-        return (dest);
+	if (dest == src || src == NULL)
+		return (dest);
 
 /* Copy characters from source to destination */
-    while (src[index])
-    {
-        dest[index] = src[index];
-        index++;
-    }
-    dest[index] = '\0'; /* Null-terminate the destination string */
-    return (dest);
+	while (src[index])
+	{
+		dest[index] = src[index];
+		index++;
+	}
+	dest[index] = '\0'; /* Null-terminate the destination string */
+	return (dest);
 }
 
 /**
@@ -33,25 +33,24 @@ char *_strcpy(char *dest, char *src)
  */
 char *_strdup(const char *str)
 {
-    int length = 0;
-    char *duplicate;
+	int length = 0;
+	char *duplicate;
 
 /* Check for NULL input */
-    if (str == NULL)
-        return (NULL);
+	if (str == NULL)
+		return (NULL);
 
 /* Calculate the length of the input string */
-    while (*str++)
-        length++;
+	while (*str++)
+		length++;
 /* Allocate memory for the duplicate string */
-    duplicate = malloc(sizeof(char) * (length + 1));
-    if (!duplicate)
-        return (NULL);
+	duplicate = malloc(sizeof(char) * (length + 1));
+	if (!duplicate)
+		return (NULL);
 /* Copy characters from input to duplicate */
-    for (length++; length--;)
-        duplicate[length] = *--str;
-
-    return (duplicate);
+	for (length++; length--;)
+		duplicate[length] = *--str;
+	return (duplicate);
 }
 
 /**
@@ -62,18 +61,18 @@ char *_strdup(const char *str)
  */
 void _puts(char *str)
 {
-    int index = 0;
+	int index = 0;
 
 /* Check for NULL input */
-    if (!str)
-        return;
+	if (!str)
+		return;
 
 /* Print characters in the string */
-    while (str[index] != '\0')
-    {
-        _putchar(str[index]);
-        index++;
-    }
+	while (str[index] != '\0')
+	{
+		_putchar(str[index]);
+		index++;
+	}
 }
 
 /**
@@ -85,18 +84,17 @@ void _puts(char *str)
  */
 int _putchar(char c)
 {
-    static int buffer_index;
-    static char buffer[WRITE_BUF_SIZE];
+	static int buffer_index;
+	static char buffer[WRITE_BUF_SIZE];
 /* Check if the buffer needs to be flushed or is full */
-    if (c == BUF_FLUSH || buffer_index >= WRITE_BUF_SIZE)
-    {
-        write(1, buffer, buffer_index);
-        buffer_index = 0;
-    }
+	if (c == BUF_FLUSH || buffer_index >= WRITE_BUF_SIZE)
+	{
+		write(1, buffer, buffer_index);
+		buffer_index = 0;
+	}
 
 /* Add the character to the buffer, unless it's a flush indicator */
-    if (c != BUF_FLUSH)
-        buffer[buffer_index++] = c;
-
-    return (1);
+	if (c != BUF_FLUSH)
+		buffer[buffer_index++] = c;
+	return (1);
 }
