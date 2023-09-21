@@ -5,14 +5,13 @@
  * @info: Pointer to the shell information struct
  * @arguments: Argument vector from main()
  *
- * Returns:
- *   - 0 on success
+ * Return:- 0 on success
  *   - 1 on error
  *   - Error code otherwise
  */
 int hsh(info_t *info, char **av)
 {
-   ssize_t r = 0;
+	ssize_t r = 0;
 	int builtin_ret = 0;
 
 	while (r != -1 && builtin_ret != -2)
@@ -52,47 +51,46 @@ int hsh(info_t *info, char **av)
  * find_builtin_command - Find a built-in command in the shell
  * @info: Pointer to the shell information struct
  *
- * Returns:
- *   - -1 if the built-in command is not found
+ * Return: -1 if the built-in command is not found
  *   - 0 if the built-in command is executed successfully
  *   - 1 if the built-in command is found but not successful
  *   - -2 if the built-in command signals an exit
  */
 int find_builtin_command(info_t *info)
 {
-    int i, builtin_return_code = -1;
-    builtin_table built_in_commands[] = {
-        {"exit", exit_shell},
-        {"env",_myenvironment},
-        {"help", display_help},
-        {"history", displayCommandHistory},
-        {"setenv", _mysetenv},
-        {"unsetenv", _myunsetenv},
-        {"cd", change_directory},
-        {"alias", aliasCommand},
-        {NULL, NULL}
-    };
+	int i, builtin_return_code = -1;
+	builtin_table built_in_commands[] = {
+		{"exit", exit_shell},
+		{"env", _myenvironment},
+		{"help", display_help},
+		{"history", displayCommandHistory},
+		{"setenv", _mysetenv},
+		{"unsetenv", _myunsetenv},
+		{"cd", change_directory},
+		{"alias", aliasCommand},
+		{NULL, NULL}
+	};
 
-    for (i = 0; built_in_commands[i].type; i++)
-    {
-        if (_strcmp(info->argv[0], built_in_commands[i].type) == 0)
-        {
-            info->line_count++;
-            builtin_return_code = built_in_commands[i].func(info);
-            break;
-        }
-    }
+	for (i = 0; built_in_commands[i].type; i++)
+	{
+		if (_strcmp(info->argv[0], built_in_commands[i].type) == 0)
+		{
+			info->line_count++;
+			builtin_return_code = built_in_commands[i].func(info);
+			break;
+		}
+	}
 
-    return (builtin_return_code);
+	return (builtin_return_code);
 }
 
 /**
- * find_external_command - Find and execute an external command
+ * find_command - Find and execute an external command
  * @info: Pointer to the shell information struct
  */
 void find_command(info_t *info)
 {
-   char *path = NULL;
+	char *path = NULL;
 	int i, k;
 
 	info->path = info->argv[0];
@@ -127,12 +125,13 @@ void find_command(info_t *info)
 }
 
 /**
- * fork_and_execute_command - Fork a new process and execute an external command
+ * fork_command - Fork a new process and execute an
+ * external command
  * @info: Pointer to the shell information struct
  */
 void fork_command(info_t *info)
 {
-   pid_t child_pid;
+	pid_t child_pid;
 
 	child_pid = fork();
 	if (child_pid == -1)
