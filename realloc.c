@@ -9,11 +9,12 @@
  */
 char *_memset(char *dest, char byte, unsigned int n)
 {
-    unsigned int index;
+	unsigned int index;
 
-    for (index = 0; index < n; index++)
-        dest[index] = byte;
-    return (dest);
+	for (index = 0; index < n; index++)
+
+		dest[index] = byte;
+	return (dest);
 }
 
 /**
@@ -22,13 +23,13 @@ char *_memset(char *dest, char byte, unsigned int n)
  */
 void ffree(char **str_array)
 {
-    char **temp = str_array;
+	char **temp = str_array;
 
-    if (!str_array)
-        return;
-    while (*str_array)
-        free(*str_array++);
-    free(temp);
+	if (!str_array)
+		return;
+	while (*str_array)
+		free(*str_array++);
+	free(temp);
 }
 
 /**
@@ -40,26 +41,24 @@ void ffree(char **str_array)
  */
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-    char *new_ptr;
+	char *new_ptr;
 
-    if (!ptr)
-        return (malloc(new_size));
-    if (!new_size)
-        return (free(ptr), NULL);
-    if (new_size == old_size)
-        return (ptr);
+	if (!ptr)
+		return (malloc(new_size));
+	if (!new_size)
+		return (free(ptr), NULL);
+	if (new_size == old_size)
+		return (ptr);
+	new_ptr = malloc(new_size);
+	if (!new_ptr)
+		return (NULL);
 
-    new_ptr = malloc(new_size);
-    if (!new_ptr)
-        return (NULL);
+/*Copy the data from the old block to the new block*/
+	old_size = (old_size < new_size) ? old_size : new_size;
+	while (old_size--)
+		new_ptr[old_size] = ((char *)ptr)[old_size];
 
-/*Copy the data from the old block to the new block*/ 
-    old_size = (old_size < new_size) ? old_size : new_size;
-    while (old_size--)
-        new_ptr[old_size] = ((char *)ptr)[old_size];
-
-/*Free the old memory block*/ 
-    free(ptr);
-
-    return (new_ptr);
+/*Free the old memory block*/
+	free(ptr);
+	return (new_ptr);
 }
