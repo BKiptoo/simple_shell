@@ -49,8 +49,8 @@ int _unsetenv(info_t *info, char *var)
 		}
 		node = node->next;
 		i++;
-		return (info->env_changed);
 	}
+	return (info->env_changed);
 }
 /**
  * _setenv - Initializes a new environment variable or
