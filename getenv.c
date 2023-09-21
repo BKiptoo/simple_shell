@@ -13,8 +13,8 @@ char **get_environ(info_t *info)
 	if (!info->environ || info->env_changed)
 	{
 /* Convert the linked list of environment variables to an array of strings.*/
-	    info->environ = list_to_strings(info->env);
-	    info->env_changed = 0;
+		info->environ = list_to_strings(info->env);
+		info->env_changed = 0;
 	}
 	return (info->environ);
 }
