@@ -1,47 +1,47 @@
 #include "shell.h"
 
 /**
- * _str_length - returns the length of a string
+ * _strlen - returns the length of a string
  * @str: the string whose length to check
  *
  * Return: integer length of the string
  */
 int _strlen(char *str)
 {
-    int length = 0;
+	int length = 0;
 
-    if (!str)
-        return (0);
-
-    while (*str++)
-        length++;
-    return (length);
+	if (!str)
+		return (0);
+	while (*str++)
+		length++;
+	return (length);
 }
 
 /**
- * _str_compare - performs lexicographic comparison of two strings.
+ * _strcmp - performs lexicographic comparison of two strings.
  * @str1: the first string
  * @str2: the second string
  *
- * Return: negative if str1 < str2, positive if str1 > str2, zero if str1 == str2
+ * Return: negative if str1 < str2, positive if
+ * str1 > str2, zero if str1 == str2
  */
 int _strcmp(char *str1, char *str2)
 {
-    while (*str1 && *str2)
-    {
-        if (*str1 != *str2)
-            return (*str1 - *str2);
-        str1++;
-        str2++;
-    }
-    if (*str1 == *str2)
-        return (0);
-    else
-        return (*str1 < *str2 ? -1 : 1);
+	while (*str1 && *str2)
+	{
+		if (*str1 != *str2)
+			return (*str1 - *str2);
+		str1++;
+		str2++;
+	}
+	if (*str1 == *str2)
+		return (0);
+	else
+		return (*str1 < *str2 ? -1 : 1);
 }
 
 /**
- * str_starts_with - checks if needle starts with haystack
+ * starts_with - checks if needle starts with haystack
  * @haystack: string to search
  * @needle: the substring to find
  *
@@ -49,16 +49,16 @@ int _strcmp(char *str1, char *str2)
  */
 char *starts_with(const char *haystack, const char *needle)
 {
-    while (*needle)
-    {
-        if (*needle++ != *haystack++)
-            return (NULL);
-    }
-    return ((char *)haystack);
+	while (*needle)
+	{
+		if (*needle++ != *haystack++)
+			return (NULL);
+	}
+	return ((char *)haystack);
 }
 
 /**
- * _str_concatenate - concatenates two strings
+ * _strcat - concatenates two strings
  * @dest: the destination buffer
  * @src: the source buffer
  *
@@ -66,13 +66,13 @@ char *starts_with(const char *haystack, const char *needle)
  */
 char *_strcat(char *dest, char *src)
 {
-    char *result = dest;
+	char *result = dest;
 
-    while (*dest)
-        dest++;
-    while (*src)
-        *dest++ = *src++;
+	while (*dest)
+		dest++;
+	while (*src)
+		*dest++ = *src++;
 /*Ensure null-termination of the concatenated string */
-    *dest = *src; 
-    return (result);
+	*dest = *src;
+	return (result);
 }
