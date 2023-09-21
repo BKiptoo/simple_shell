@@ -70,7 +70,8 @@ char **strtow(char *input_str, char *delimiters)
 }
 
 /**
- * split_string_single_delimiter - splits a string into words using a single delimiter
+ * split_string_single_delimiter - splits a string into words
+ * using a single delimiter
  * @input_str: the input string to split
  * @delimiter: the delimiter character
  *
@@ -88,7 +89,8 @@ char **split_string_single_delimiter(char *input_str, char delimiter)
 	/* Count the number of words in the input string */
 	for (i = 0; input_str[i] != '\0'; i++)
 		if ((input_str[i] != delimiter && input_str[i + 1] == delimiter) ||
-		    (input_str[i] != delimiter && !input_str[i + 1]) || input_str[i + 1] == delimiter)
+		    (input_str[i] != delimiter && !input_str[i + 1]) ||
+		    input_str[i + 1] == delimiter)
 			num_words++;
 
 	/* If no words found, return NULL */
@@ -108,7 +110,8 @@ char **split_string_single_delimiter(char *input_str, char delimiter)
 
 		k = 0;
 		/* Copy characters until the next delimiter or end of string */
-		while (input_str[i + k] != delimiter && input_str[i + k] && input_str[i + k] != delimiter)
+		while (input_str[i + k] != delimiter &&
+				input_str[i + k] && input_str[i + k] != delimiter)
 			k++;
 
 		/* Allocate memory for the current word */
