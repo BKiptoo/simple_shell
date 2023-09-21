@@ -8,17 +8,17 @@
  */
 void _eputs(char *str)
 {
-    int index = 0;
+	int index = 0;
 
-    if (!str)
-        return;
+	if (!str)
+		return;
 
 /* Iterate through the string and print each character to stderr.*/
-    while (str[index] != '\0')
-    {
-        _eputchar(str[index]);
-        index++;
-    }
+	while (str[index] != '\0')
+	{
+		_eputchar(str[index]);
+		index++;
+	}
 }
 
 /**
@@ -30,25 +30,26 @@ void _eputs(char *str)
  */
 int _eputchar(char c)
 {
-    static int bufferIndex;
-    static char buffer[WRITE_BUF_SIZE];
+	static int bufferIndex;
+	static char buffer[WRITE_BUF_SIZE];
 
- /*If the character is a flush signal or the buffer is full, write the buffer to stderr.*/ 
-    if (c == BUF_FLUSH || bufferIndex >= WRITE_BUF_SIZE)
-    {
-        write(2, buffer, bufferIndex);
-        bufferIndex = 0;
-    }
+/*If the character is a flush signal write the buffer to stderr.*/
+	if (c == BUF_FLUSH || bufferIndex >= WRITE_BUF_SIZE)
+	{
+		write(2, buffer, bufferIndex);
+		bufferIndex = 0;
+	}
 
 /* If the character is not a flush signal, add it to the buffer.*/
-    if (c != BUF_FLUSH)
-        buffer[bufferIndex++] = c;
+	if (c != BUF_FLUSH)
+		buffer[bufferIndex++] = c;
 
-    return 1;
+	return (1);
 }
 
 /**
- * writeCharacterToFileDescriptor - Writes the character c to the given file descriptor.
+ * writeCharacterToFileDescriptor - Writes the character
+ * c to the given file descriptor.
  * @c: The character to print.
  * @fd: The file descriptor to write to.
  *
@@ -57,25 +58,26 @@ int _eputchar(char c)
  */
 int writeCharacterToFileDescriptor(char c, int fd)
 {
-    static int bufferIndex;
-    static char buffer[WRITE_BUF_SIZE];
+	static int bufferIndex;
+	static char buffer[WRITE_BUF_SIZE];
 
-/*If the character is a flush signal or the buffer is full, write the buffer to the specified file descriptor.*/ 
-    if (c == BUF_FLUSH || bufferIndex >= WRITE_BUF_SIZE)
-    {
-        write(fd, buffer, bufferIndex);
-        bufferIndex = 0;
-    }
+/* is char is a flush signal write the buffer to the specified fd.*/
+	if (c == BUF_FLUSH || bufferIndex >= WRITE_BUF_SIZE)
+	{
+		write(fd, buffer, bufferIndex);
+		bufferIndex = 0;
+	}
 
-/*If the character is not a flush signal, add it to the buffer.*/ 
-    if (c != BUF_FLUSH)
-        buffer[bufferIndex++] = c;
+/*If the character is not a flush signal, add it to the buffer.*/
+	if (c != BUF_FLUSH)
+		buffer[bufferIndex++] = c;
 
-    return 1;
+	return (1);
 }
 
 /**
- * printStringToFileDescriptor - Prints an input string to the specified file descriptor.
+ * printStringToFileDescriptor - Prints an input string
+ * to the specified file descriptor.
  * @str: The string to be printed.
  * @fd: The file descriptor to write to.
  *
@@ -83,16 +85,15 @@ int writeCharacterToFileDescriptor(char c, int fd)
  */
 int printStringToFileDescriptor(char *str, int fd)
 {
-    int charCount = 0;
+	int charCount = 0;
 
-    if (!str)
-        return 0;
+	if (!str)
+		return (0);
 
-/* Iterate through the string and write each character to the specified file descriptor.*/
-    while (*str)
-    {
-        charCount += writeCharacterToFileDescriptor(*str++, fd);
-    }
-
-    return charCount;
+/*Iterate through the string write each character to the specified fd.*/
+	while (*str)
+	{
+		charCount += writeCharacterToFileDescriptor(*str++, fd);
+	}
+	return (charCount);
 }

@@ -1,10 +1,10 @@
 #include "shell.h"
 
 /**
- *  _myenvironment - Prints the current environment variables
+ * _myenvironment - Prints the current environment variables
  * @info: Pointer to a structure containing potential
  * arguments and environment data.
- *
+ * Return: The value of the specified
  * This function prints the list of environment variables.
  */
 int _myenvironment(info_t *info)
