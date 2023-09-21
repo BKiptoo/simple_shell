@@ -112,10 +112,9 @@ char *convert_number_to_string(long int num, int base, int flags)
 	do {
 		*--ptr = digit_array[n % base];
 		n /= base;
-	}
-	while (n != 0)
-		if (sign)
-			*--ptr = sign;
+	} while (n != 0);
+	if (sign)
+		*--ptr = sign;
 	return (ptr);
 }
 
