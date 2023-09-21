@@ -9,20 +9,20 @@
  */
 int is_cmd(info_t *info, char *file_path)
 {
-    struct stat file_stat;
+	struct stat file_stat;
 
-    (void)info;
+	(void)info;
 
 /* Check if the file path is NULL or if stat fails. */
-    if (!file_path || stat(file_path, &file_stat) != 0)
-        return (0);
+	if (!file_path || stat(file_path, &file_stat) != 0)
+		return (0);
 
 /* Check if the file is a regular file (executable). */
-    if (S_ISREG(file_stat.st_mode))
-    {
-        return (1);
-    }
-    return (0);
+	if (S_ISREG(file_stat.st_mode))
+	{
+		return (1);
+	}
+	return (0);
 }
 
 /**
@@ -35,17 +35,16 @@ int is_cmd(info_t *info, char *file_path)
  */
 char *extract_substring(char *input_string, int start_index, int end_index)
 {
-    static char buffer[1024];
-    int i=0,buffer_index = 0;
+	static char buffer[1024];
+	int i = 0, buffer_index = 0;
 
-    for (buffer_index=0, i = start_index; i < end_index; i++)
-    {
-        if (input_string[i] != ':')
-            buffer[buffer_index++] = input_string[i];
-    }
-    buffer[buffer_index] = '\0';
-
-    return (buffer);
+	for (buffer_index = 0, i = start_index; i < end_index; i++)
+	{
+		if (input_string[i] != ':')
+			buffer[buffer_index++] = input_string[i];
+	}
+	buffer[buffer_index] = '\0';
+	return (buffer);
 }
 
 /**
@@ -58,49 +57,46 @@ char *extract_substring(char *input_string, int start_index, int end_index)
  */
 char *find_path(info_t *info, char *path_string, char *command_name)
 {
-    int path_index = 0;
-    int current_position = 0;
-    char *full_path;
+	int path_index = 0;
+	int current_position = 0;
+	char *full_path;
 
 /* Check if the path_string is NULL. */
-    if (!path_string)
-        return (NULL);
+	if (!path_string)
+		return (NULL);
 
 /* Check if the command_name starts with "./" and is an executable. */
-    if ((_strlen(command_name) > 2) && starts_with(command_name, "./"))
-    {
-        if (is_cmd(info, command_name))
-            return (command_name);
-    }
-
-    while (1)
-    {
+	if ((_strlen(command_name) > 2) && starts_with(command_name, "./"))
+	{
+		if (is_cmd(info, command_name))
+			return (command_name);
+	}
+	while (1)
+	{
 /* Check for the end of the path_string or a directory separator ':'. */
-        if (!path_string[path_index] || path_string[path_index] == ':')
-        {
-            full_path = extract_substring(path_string, current_position, path_index);
+		if (!path_string[path_index] || path_string[path_index] == ':')
+		{
+			full_path = extract_substring(path_string, current_position, path_index);
 
 /* Append the command_name to the extracted path. */
-            if (!*full_path)
-                _strcat(full_path, command_name);
-            else
-            {
-                _strcat(full_path, "/");
-                _strcat(full_path, command_name);
-            }
+			if (!*full_path)
+				_strcat(full_path, command_name);
+			else
+			{
+				_strcat(full_path, "/");
+				_strcat(full_path, command_name);
+			}
 
 /* Check if the resulting path is an executable. */
-            if (is_cmd(info, full_path))
-                return (full_path);
+			if (is_cmd(info, full_path))
+				return (full_path);
 
 /* If not found in this directory, continue searching. */
-            if (!path_string[path_index])
-                break;
-
-            current_position = path_index + 1;
-        }
-        path_index++;
-    }
-
-    return (NULL);
+			if (!path_string[path_index])
+				break;
+			current_position = path_index + 1;
+		}
+		path_index++;
+	}
+	return (NULL);
 }
