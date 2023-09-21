@@ -3,12 +3,8 @@
 /**
  * bfree - Frees a dynamically allocated memory pointer and sets it to NULL.
  * @ptr: Address of the pointer to free.
- * Return: -2 if an exit request is made
- * This function frees the memory block pointed to by 'ptr' and sets 'ptr' to
- * NULL to prevent accessing the freed memory. It checks if 'ptr' is not NULL
- * and if the pointer it references is not NULL before freeing the memory.
- *
- * @return: 1 if memory was successfully freed, otherwise 0.
+ * Return: -2 if an exit request is made, 1 if memory was successfully freed,
+ * 0 otherwise.
  */
 int bfree(void **ptr)
 {

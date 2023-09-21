@@ -3,8 +3,7 @@
 /**
  * hsh - Main loop of the shell
  * @info: Pointer to the shell information struct
- * @arguments: Argument vector from main()
- *
+ * @av: Address of the pointer to free.
  * Return:- 0 on success
  *   - 1 on error
  *   - Error code otherwise
